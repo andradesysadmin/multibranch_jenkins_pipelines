@@ -36,10 +36,12 @@ pipeline {
             steps {
                 script {
                     echo "Testando a aplicação ${env.APP}..."
+                    sh "npm i"
+                    sh "npx jest --ci --maxWorkers=2"
+
                 }
             }
         }
-
         stage('Deploy') {
             steps {
                 script {
