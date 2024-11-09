@@ -5,15 +5,19 @@ pipeline {
         APP = 'app'
         PORT = '5000'
         PORTA_INTERNA = '8000'
-        REPO='andradesysadmin'
+        REPO = 'andradesysadmin'
+        REMOTE_HOST = 'gabriel@192.168.10.50' 
+        REMOTE_DIR = "/home/gabriel/aplicacoes/"
     }
 
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    echo "Baixando o repositório: ${env.APP}..."
-                    git branch: 'main', url: "git@github.com:${env.REPO}/${env.APP}.git"
+                    echo "Baixando o repositório: ${env.APP} no host remoto..."
+                    sh """
+                        ssh ${env.REMOTE_HOST} 'git clone git@github.com:${env.REPO}/${env.APP}.git ${env.REMOTE_DIR} || (cd ${env.REMOTE_DIR} && git pull)'
+                    """
                 }
             }
         }
@@ -21,13 +25,17 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    echo "Buildando a aplicação ${env.APP}..."
-                    sh 'ls -la'
-                    sh "cp /var/.envs/${env.APP}/.env ."
-                    sh "sudo docker stop ${env.APP} || true"
-                    sh "sudo docker rm ${env.APP} || true"
-                    sh "sudo docker rmi ${env.APP} || true"
-                    sh "sudo docker build -t ${env.APP}:latest ."
+                    echo "Buildando a aplicação ${env.APP} no host remoto..."
+                    sh """
+                        ssh ${env.REMOTE_HOST} '
+                            cd ${env.REMOTE_DIR}
+                            cp /var/.envs/${env.APP}/.env . || true
+                            sudo docker stop ${env.APP} || true
+                            sudo docker rm ${env.APP} || true
+                            sudo docker rmi ${env.APP} || true
+                            sudo docker build -t ${env.APP}:latest .
+                        '
+                    """
                 }
             }
         }
@@ -35,10 +43,14 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    echo "Testando a aplicação ${env.APP}..."
-                    sh "npm i"
-                    sh "npx jest --ci --maxWorkers=2"
-
+                    echo "Testando a aplicação ${env.APP} no host remoto..."
+                    sh """
+                        ssh ${env.REMOTE_HOST} '
+                            cd ${env.REMOTE_DIR}
+                            npm install
+                            npx jest --ci --maxWorkers=2
+                        '
+                    """
                 }
             }
         }
@@ -46,8 +58,13 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo "Subindo a aplicação ${env.APP}..."
-                    sh "sudo docker run -d -p ${env.PORT}:${env.PORTA_INTERNA} --restart always --name ${env.APP} ${env.APP}:latest"
+                    echo "Subindo a aplicação ${env.APP} no host remoto..."
+                    sh """
+                        ssh ${env.REMOTE_HOST} '
+                            cd ${env.REMOTE_DIR}
+                            sudo docker run -d -p ${env.PORT}:${env.PORTA_INTERNA} --restart always --name ${env.APP} ${env.APP}:latest
+                        '
+                    """
                 }
             }
         }
