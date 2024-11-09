@@ -2,11 +2,17 @@ pipeline {
     agent any
 
     environment {
+        //Nome do rapositório de sua aplicação
         APP = 'app'
+        //Porta da sua aplicação
         PORT = '5000'
+        //Porta interna do docker
         PORTA_INTERNA = '8000'
+        //Nome do seu usuario do github
         REPO = 'andradesysadmin'
-        REMOTE_HOST = 'gabriel@192.168.10.50' 
+
+        //Configurações do SSH
+        REMOTE_HOST = 'gabriel@ip-aws' 
         REMOTE_DIR = "/home/gabriel/aplicacoes/"
     }
 
