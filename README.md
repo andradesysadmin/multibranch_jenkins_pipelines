@@ -5,8 +5,10 @@
 
 Este projeto foi desenvolvido como base em uma tarefa que recebi em minha atual empresa, a tarefa consistia em criar pipelines de deploy automático para múltiplas APIs em Node.js e frontends em React, com integração e entrega contínuas (CI/CD) na AWS. A demanda foi para a criação de pipelines distintas para cada serviço, e para organizar esse processo de maneira escalável, optei por centralizar todos os Jenkinsfiles em um único repositório, utilizando múltiplas ramificações (branches).
 
-Com isso, consegui implementar uma solução eficiente e modular que facilita a manutenção e evolução das pipelines para diferentes microserviços, garantindo uma automação robusta e ágil em cada fase do ciclo de vida do software.
+Com isso, consegui implementar uma solução eficiente e modular que facilita a manutenção e evolução das pipelines para diferentes microserviços, garantindo uma automação robusta e ágil em cada fase do ciclo de vida do software.<br><br>
 
+<h2>Modelo</h2>
+<img src="https://github.com/andradesysadmin/multibranch_jenkins_pipelines/blob/main/modelo.png">
 
 </div>
 
