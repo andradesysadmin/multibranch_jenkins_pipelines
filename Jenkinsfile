@@ -33,6 +33,7 @@ pipeline {
             steps {
                 script {
                     echo "Testando a aplicação ${env.APP}..."
+                    sh 'npx jest --ci --maxWorkers=2'
                 }
             }
         }
