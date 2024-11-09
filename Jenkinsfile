@@ -6,7 +6,7 @@ pipeline {
         PORT = '5000'
         PORTA_INTERNA = '8000'
         REPO = 'andradesysadmin'
-        REMOTE_HOST = 'gabriel@192.168.10.50' 
+        REMOTE_HOST = 'gabriel@ip-aws' 
         REMOTE_DIR = "/home/gabriel/aplicacoes/"
     }
 
