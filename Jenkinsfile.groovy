@@ -2,9 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP = 'app'
-        PORT = '5000'
-        PORTA_INTERNA = '8000'
+        APP='frontend'
         REPO='andradesysadmin'
     }
 
@@ -13,7 +11,7 @@ pipeline {
             steps {
                 script {
                     echo "Baixando o repositório: ${env.APP}..."
-                    git branch: 'main', url: "git@github.com:${env.REPO}/${env.APP}.git"
+                    git branch: 'main', url: "git@github.com:${env.APP}/${env.APP}.git"
                 }
             }
         }
@@ -23,11 +21,10 @@ pipeline {
                 script {
                     echo "Buildando a aplicação ${env.APP}..."
                     sh 'ls -la'
-                    sh "cp /var/.envs/${env.APP}/.env ."
-                    sh "sudo docker stop ${env.APP} || true"
-                    sh "sudo docker rm ${env.APP} || true"
-                    sh "sudo docker rmi ${env.APP} || true"
-                    sh "sudo docker build -t ${env.APP}:latest ."
+                    sh "cp /var/.envs/${env.APP}/.env* ."
+                    sh 'sudo rm -rf node_modules/'
+                    sh 'sudo npm i'
+                    sh 'sudo npm run build'
                 }
             }
         }
@@ -36,6 +33,7 @@ pipeline {
             steps {
                 script {
                     echo "Testando a aplicação ${env.APP}..."
+                    sh 'npx jest --ci --maxWorkers=2'
                 }
             }
         }
@@ -44,7 +42,6 @@ pipeline {
             steps {
                 script {
                     echo "Subindo a aplicação ${env.APP}..."
-                    sh "sudo docker run -d -p ${env.PORT}:${env.PORTA_INTERNA} --restart always --name ${env.APP} ${env.APP}:latest"
                 }
             }
         }
